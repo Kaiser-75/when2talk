@@ -5,204 +5,347 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <meta name="title" content="When2Talk: When Should a Proactive In-Car Agent Talk?">
-  <meta name="description" content="When2Talk studies when a proactive in-car agent should speak immediately, delay a message, or remain silent based on event priority and passenger activity.">
+  <meta name="description" content="When2Talk studies when proactive in-car agents should speak immediately, delay a message, or remain silent based on event priority and passenger activity.">
   <meta name="keywords" content="proactive in-car agent, autonomous vehicles, communication timing, context-sensitive policy, VR simulation, CARLA, interruptibility">
   <meta name="author" content="Kaiser Hamid, Peihang Li, Nade Liang">
 
   <meta property="og:type" content="article">
   <meta property="og:title" content="When2Talk: When Should a Proactive In-Car Agent Talk?">
-  <meta property="og:description" content="A CARLA/VR passenger study comparing event-triggered communication with context-sensitive communication that can speak immediately, delay a message, or remain silent.">
+  <meta property="og:description" content="A CARLA/VR passenger study of event-triggered and context-sensitive proactive in-car communication.">
   <meta property="og:image" content="static/images/social_preview.png">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="When2Talk: When Should a Proactive In-Car Agent Talk?">
-  <meta name="twitter:description" content="Context-sensitive proactive in-car communication across event priority and passenger activity.">
+  <meta name="twitter:description" content="When should a proactive in-car agent speak now, delay, or remain silent?">
   <meta name="twitter:image" content="static/images/social_preview.png">
 
   <title>When2Talk: When Should a Proactive In-Car Agent Talk?</title>
 
-  <link rel="stylesheet" href="static/css/bulma.min.css">
-  <link rel="stylesheet" href="static/css/index.css">
-  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  </noscript>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script defer src="static/js/fontawesome.all.min.js"></script>
-  <script defer src="static/js/index.js"></script>
 
   <style>
+    :root {
+      --ink: #202124;
+      --muted: #62666d;
+      --line: #e5e7eb;
+      --soft: #f7f8fa;
+      --link: #2563eb;
+      --max: 1050px;
+    }
+    * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', sans-serif; color: #252525; }
-    .publication-title { line-height: 1.08; letter-spacing: -0.025em; }
-    .author-block { display: inline-block; margin: 0 .3rem; }
-    .affiliation { color: #555; margin-top: .45rem; }
-    .equal-note { color: #777; font-size: .88rem; margin-top: .3rem; }
-    .paper-figure { display: block; width: 100%; height: auto; border-radius: 14px; border: 1px solid #e8e8e8; background: white; }
-    .figure-caption { max-width: 920px; margin: .8rem auto 0; color: #5b5b5b; font-size: .93rem; line-height: 1.55; }
-    .section-lead { max-width: 850px; margin: -.15rem auto 2rem; color: #606060; text-align: center; line-height: 1.65; }
-    .finding-card { height: 100%; border: 1px solid #e8e8e8; border-radius: 16px; padding: 1.25rem; background: white; box-shadow: 0 8px 28px rgba(0,0,0,.04); }
-    .finding-value { font-size: 1.45rem; font-weight: 800; letter-spacing: -.02em; margin: .3rem 0 .45rem; }
-    .finding-label { font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .055em; color: #777; }
-    .soft-section { background: #f7f9fc; }
-    .key-line { font-size: 1.05rem; line-height: 1.65; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #fff;
+      line-height: 1.65;
+    }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
+    .hero { padding: 72px 0 44px; text-align: center; }
+    .title {
+      margin: 0 auto;
+      max-width: 980px;
+      font-size: clamp(2.15rem, 5vw, 3.65rem);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+    }
+    .authors { margin-top: 24px; font-size: 1.18rem; }
+    .authors span { display: inline-block; margin: 0 10px; }
+    .affiliation { margin-top: 7px; color: #50545a; font-size: 1.05rem; }
+    .equal-note { margin-top: 6px; color: #757980; font-size: .92rem; }
+    .buttons { margin-top: 24px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 112px;
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: #242424;
+      color: #fff;
+      font-weight: 600;
+      border: 1px solid #242424;
+    }
+    .button:hover { color: #fff; text-decoration: none; background: #000; }
+    section { padding: 58px 0; }
+    section.soft { background: var(--soft); }
+    h2 {
+      margin: 0 0 18px;
+      text-align: center;
+      font-size: clamp(1.7rem, 3vw, 2.2rem);
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+    }
+    h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    .lead {
+      max-width: 850px;
+      margin: 0 auto 28px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .prose { max-width: 820px; margin: 0 auto; font-size: 1.02rem; }
+    .prose p { margin: 0 0 1rem; }
+    .paper-figure {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+    .figure-caption {
+      max-width: 930px;
+      margin: 12px auto 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+    .result-figure + .result-figure { margin-top: 40px; }
+    .finding-grid,
+    .implication-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .text-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      background: #fff;
+    }
+    .text-card p { margin: 0; color: #474b52; }
+    .bib-wrap { max-width: 850px; margin: 0 auto; position: relative; }
+    pre {
+      margin: 0;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #f6f7f9;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font: 0.9rem/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      border: 1px solid #d6d9de;
+      border-radius: 8px;
+      background: #fff;
+      padding: 7px 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    footer {
+      padding: 34px 0 42px;
+      border-top: 1px solid var(--line);
+      text-align: center;
+      color: #74777d;
+      font-size: .9rem;
+    }
+    @media (max-width: 720px) {
+      .hero { padding-top: 50px; }
+      section { padding: 44px 0; }
+      .finding-grid, .implication-grid { grid-template-columns: 1fr; }
+      .authors span { margin: 3px 6px; }
+    }
   </style>
 </head>
 
 <body>
-  <main id="main-content">
-
-    <!-- Hero -->
+  <main>
     <section class="hero">
-      <div class="hero-body">
-        <div class="container is-max-desktop">
-          <div class="columns is-centered">
-            <div class="column has-text-centered">
-              <h1 class="title is-1 publication-title">When2Talk: When Should a Proactive In-Car Agent Talk?</h1>
+      <div class="container">
+        <h1 class="title">When2Talk: When Should a Proactive In-Car Agent Talk?</h1>
 
-              <div class="is-size-5 publication-authors" style="margin-top:1.4rem;">
-                <span class="author-block"><strong>Kaiser Hamid</strong><sup>*</sup></span>
-                <span class="author-block"><strong>Peihang Li</strong><sup>*</sup></span>
-                <span class="author-block"><strong>Nade Liang</strong><sup>✉</sup></span>
-              </div>
-              <div class="affiliation is-size-5">Texas Tech University · Lubbock, Texas, USA</div>
-              <div class="equal-note"><sup>*</sup>Kaiser Hamid and Peihang Li contributed equally to this work. · <a href="mailto:nade.liang@ttu.edu">nade.liang@ttu.edu</a></div>
+        <div class="authors">
+          <span><strong>Kaiser Hamid</strong><sup>*</sup></span>
+          <span><strong>Peihang Li</strong><sup>*</sup></span>
+          <span><strong>Nade Liang</strong></span>
+        </div>
+        <div class="affiliation">Texas Tech University · Lubbock, Texas, USA</div>
+        <div class="equal-note"><sup>*</sup>Kaiser Hamid and Peihang Li contributed equally to this work.</div>
 
-              <!-- Only two project buttons. Replace the href values later. -->
-              <div class="publication-links" style="margin-top:1.5rem;">
-                <span class="link-block">
-                  <a href="ARXIV_URL_HERE" target="_blank" class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon"><i class="ai ai-arxiv"></i></span>
-                    <span>arXiv</span>
-                  </a>
-                </span>
-                <span class="link-block">
-                  <a href="CODE_URL_HERE" target="_blank" class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon"><i class="fab fa-github"></i></span>
-                    <span>Code</span>
-                  </a>
-                </span>
-              </div>
-            </div>
-          </div>
+        <div class="buttons">
+          <a class="button" href="ARXIV_URL_HERE" target="_blank" rel="noopener">arXiv</a>
+          <a class="button" href="CODE_URL_HERE" target="_blank" rel="noopener">Code</a>
         </div>
       </div>
     </section>
 
-    <!-- Teaser -->
-    <section class="section pt-0">
-      <div class="container is-max-desktop">
+    <!-- Teaser: Figure 1 -->
+    <section id="teaser">
+      <div class="container">
         <img class="paper-figure" src="static/images/figure1_study_overview.png" alt="When2Talk study overview">
-        <p class="figure-caption has-text-centered">
-          <strong>When2Talk overview.</strong> Event-triggered (ET) communication speaks immediately at every predefined ride event. Context-sensitive (CS) communication selects Immediate, Delayed, or Silent delivery based on Event Priority and Passenger Activity.
-        </p>
-      </div>
-    </section>
-
-    <!-- Key findings teaser -->
-    <section class="section soft-section" id="findings">
-      <div class="container is-max-desktop">
-        <h2 class="title is-3 has-text-centered">Key Findings</h2>
-        <p class="section-lead">Across 41 participants, context-sensitive communication mainly changed <em>when</em> and <em>whether</em> the vehicle spoke, while the canonical event message stayed fixed whenever both policies communicated.</p>
-
-        <div class="columns is-multiline is-variable is-4">
-          <div class="column is-half-tablet is-one-quarter-desktop">
-            <div class="finding-card">
-              <div class="finding-label">Appropriateness</div>
-              <div class="finding-value">CS 5.09 · ET 4.50</div>
-              <p>Communication appropriateness was higher under CS (<em>p</em> = .019).</p>
-            </div>
-          </div>
-          <div class="column is-half-tablet is-one-quarter-desktop">
-            <div class="finding-card">
-              <div class="finding-label">Interruption</div>
-              <div class="finding-value">CS 2.14 · ET 3.71</div>
-              <p>CS substantially reduced perceived interruption (<em>p</em> &lt; .001; lower is better).</p>
-            </div>
-          </div>
-          <div class="column is-half-tablet is-one-quarter-desktop">
-            <div class="finding-card">
-              <div class="finding-label">Trust</div>
-              <div class="finding-value">CS 4.96 · ET 4.95</div>
-              <p>Overall trust did not differ between the two policies (<em>p</em> = .959).</p>
-            </div>
-          </div>
-          <div class="column is-half-tablet is-one-quarter-desktop">
-            <div class="finding-card">
-              <div class="finding-label">Usefulness</div>
-              <div class="finding-value">ET 4.51 · CS 3.71</div>
-              <p>ET was rated more useful overall, driven by Silent contexts where CS withheld explicit information.</p>
-            </div>
-          </div>
-        </div>
-
-        <p class="key-line has-text-centered mt-5">
-          <strong>Most importantly:</strong> delayed communication improved appropriateness and reduced interruption while preserving usefulness, whereas silence reduced interruption but could remove information or confirmation that some passengers valued.
+        <p class="figure-caption">
+          <strong>When2Talk overview.</strong> We compare event-triggered (ET) communication, which speaks immediately at every predefined ride event, with context-sensitive (CS) communication, which considers event priority and passenger activity to communicate immediately, defer the message, or remain silent.
         </p>
       </div>
     </section>
 
     <!-- Abstract -->
-    <section class="section" id="abstract">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-four-fifths">
-            <h2 class="title is-3 has-text-centered">Abstract</h2>
-            <div class="content has-text-justified">
-              <p>
-                Proactive in-cabin agents can help passengers understand automated-vehicle (AV) behavior, but communicating every ride event may introduce unnecessary interruptions. We investigated how communication should adapt to event priority and passenger activity. In a mixed-methods within-subject study, 41 participants rode as passenger in a VR simulated fully-automated vehicle. We compared an event-triggered (ET) policy that communicated immediately at every event with a context-sensitive (CS) policy that selected <em>Immediate</em>, <em>Delayed</em>, or <em>Silent</em> communications. CS increased communication appropriateness and substantially reduced perceived interruption. Perceived trust did not differ between policies, although baselines dispositional trust differentiated communication preferences. Findings highlight event consequence, passenger activity, continuing information value, and confirmation need as key considerations for selective in-cabin communication.
-              </p>
-            </div>
+    <section class="soft" id="abstract">
+      <div class="container">
+        <h2>Abstract</h2>
+        <div class="prose">
+          <p>
+            Proactive in-cabin agents can help passengers understand automated-vehicle (AV) behavior, but communicating every ride event may introduce unnecessary interruptions. We investigated how communication should adapt to event priority and passenger activity. In a mixed-methods within-subject study, 41 participants rode as passenger in a VR simulated fully-automated vehicle. We compared an event-triggered (ET) policy that communicated immediately at every event with a context-sensitive (CS) policy that selected <em>Immediate</em>, <em>Delayed</em>, or <em>Silent</em> communications. CS increased communication appropriateness and substantially reduced perceived interruption. Perceived trust did not differ between policies, although baseline dispositional trust differentiated communication preferences. Findings highlight event consequence, passenger activity, continuing information value, and confirmation need as key considerations for selective in-cabin communication.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Setup: Figure 2 -->
+    <section id="setup">
+      <div class="container">
+        <h2>Experimental Setup</h2>
+        <p class="lead">
+          Participants experienced scripted CARLA ride events from the front passenger seat through a Varjo XR-4 HMD. A synchronized smartphone application controlled the assigned passenger activity and collected event-level responses.
+        </p>
+        <img class="paper-figure" src="static/images/figure2_apparatus.png" alt="When2Talk experimental apparatus">
+        <p class="figure-caption">
+          <strong>Experimental apparatus.</strong> The CARLA/VR environment, HMD, phone-based secondary task, and passenger-seat driving view used in the study.
+        </p>
+      </div>
+    </section>
+
+    <!-- Episodes: Figure 4 -->
+    <section class="soft" id="episodes">
+      <div class="container">
+        <h2>Study Episodes</h2>
+        <p class="lead">
+          Each policy block contained three ride episodes with two scripted events per episode. The episodes covered Road Monitoring, Intermittent Phone Use, and Sustained Phone Use across High- and Low-Priority events.
+        </p>
+        <img class="paper-figure" src="static/images/figure4_episode_design.png" alt="When2Talk episode and communication design">
+        <p class="figure-caption">
+          <strong>Episode and communication design.</strong> ET communicated immediately at every event. CS used the prespecified Immediate, Delayed, or Silent action for each event context; delayed communication was delivered at a later opportunity in the corresponding activity.
+        </p>
+      </div>
+    </section>
+
+    <!-- Results: Figures 6 and 7 -->
+    <section id="results">
+      <div class="container">
+        <h2>Results</h2>
+        <p class="lead">
+          Results are shown at the policy level and across Event Priority and Passenger Activity. The figures preserve the paper's participant-level distributions rather than reducing the study to benchmark-style headline scores.
+        </p>
+
+        <div class="result-figure">
+          <img class="paper-figure" src="static/images/figure6_overall_results.png" alt="Overall event-level evaluations of ET and CS">
+          <p class="figure-caption">
+            <strong>Overall policy comparison.</strong> Event-level evaluations of ET and CS across communication appropriateness, perceived interruption, trust, and usefulness.
+          </p>
+        </div>
+
+        <div class="result-figure">
+          <img class="paper-figure" src="static/images/figure7_priority_activity.png" alt="Event-level outcomes across event priority and passenger activity">
+          <p class="figure-caption">
+            <strong>Priority and activity patterns.</strong> Event-level outcomes across High- and Low-Priority contexts and the three Passenger Activities, averaged across Communication Policy.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Findings -->
+    <section class="soft" id="findings">
+      <div class="container">
+        <h2>Key Findings</h2>
+        <p class="lead">
+          The study points to selective communication as a question of timing, information value, and passenger context rather than simply whether more speech is better.
+        </p>
+        <div class="finding-grid">
+          <div class="text-card">
+            <h3>Context-sensitive communication generally reduced interruption</h3>
+            <p>CS reduced perceived interruption in the contexts where it delayed or withheld speech, while preserving trust at the overall policy level.</p>
+          </div>
+          <div class="text-card">
+            <h3>Delayed and Silent communication produced different trade-offs</h3>
+            <p>Deferral could preserve useful information while moving it to a better moment. Silence reduced narration, but it also removed explicit information and acknowledgment.</p>
+          </div>
+          <div class="text-card">
+            <h3>Passenger activity changed what communication added</h3>
+            <p>Road Monitoring gave passengers direct access to roadway cues, whereas phone-use activities changed both receptivity to speech and the information available from the scene.</p>
+          </div>
+          <div class="text-card">
+            <h3>Confirmation needs varied across passengers</h3>
+            <p>Some participants treated observable vehicle behavior as sufficient, while others valued concise acknowledgment that the vehicle had detected and interpreted the event.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Study design: one additional figure that explains the paper quickly -->
-    <section class="section soft-section" id="study">
-      <div class="container is-max-desktop">
-        <h2 class="title is-3 has-text-centered">Study Design</h2>
-        <p class="section-lead">A 2 (Communication Policy) × 2 (Event Priority) × 3 (Passenger Activity) within-subject design. Each participant experienced both ET and CS in all six Priority × Activity contexts.</p>
-        <img class="paper-figure" src="static/images/figure3_design_matrix.png" alt="When2Talk 2 by 2 by 3 study design">
-        <p class="figure-caption has-text-centered">Road Monitoring, Intermittent Phone Use, and Sustained Phone Use were crossed with High- and Low-Priority ride events. ET was Immediate in every context; CS used the prespecified Immediate, Delayed, or Silent action.</p>
+    <!-- Design implications -->
+    <section id="implications">
+      <div class="container">
+        <h2>Design Implications</h2>
+        <p class="lead">
+          The paper identifies four considerations for selecting among Immediate, Delayed, and Silent communication: event consequence, passenger activity, continuing information value, and confirmation need.
+        </p>
+        <div class="implication-grid">
+          <div class="text-card">
+            <h3>Assess whether immediate speech adds value</h3>
+            <p>Passenger attention should inform the communication decision, but it should not by itself determine whether speech is suppressed. Event consequence and information already available from the ride also matter.</p>
+          </div>
+          <div class="text-card">
+            <h3>Treat delay as a distinct scheduling action</h3>
+            <p>When information remains useful after event onset, the agent can retain it, identify a more suitable delivery opportunity, and reassess whether it is still relevant before speaking.</p>
+          </div>
+          <div class="text-card">
+            <h3>Do not treat silence as simply “less communication”</h3>
+            <p>Silence is most appropriate when speech adds limited value beyond the event, the vehicle response, and the passenger's existing understanding.</p>
+          </div>
+          <div class="text-card">
+            <h3>Separate acknowledgment from explanation detail</h3>
+            <p>A brief acknowledgment can confirm that the vehicle recognized a consequential event without requiring a full explanation at that moment; additional detail can be delayed or omitted.</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Apparatus -->
-    <section class="section" id="apparatus">
-      <div class="container is-max-desktop">
-        <h2 class="title is-3 has-text-centered">CARLA/VR Passenger Study</h2>
-        <p class="section-lead">Participants experienced scripted CARLA 0.9.15 ride events from the front passenger seat through a Varjo XR-4 HMD. A synchronized smartphone application controlled passenger activities and questionnaires, and the headset recorded eye-tracking data at 200 Hz.</p>
-        <img class="paper-figure" src="static/images/figure2_apparatus.png" alt="When2Talk experimental apparatus">
+    <!-- Citation -->
+    <section class="soft" id="citation">
+      <div class="container">
+        <h2>Citation</h2>
+        <p class="lead">Please use the following BibTeX entry. Replace the arXiv placeholders after the paper is posted.</p>
+        <div class="bib-wrap">
+          <button class="copy-btn" type="button" onclick="copyBibTeX()">Copy</button>
+          <pre id="bibtex">@misc{hamid2026when2talk,
+  title  = {When2Talk: When Should a Proactive In-Car Agent Talk?},
+  author = {Hamid, Kaiser and Li, Peihang and Liang, Nade},
+  year   = {2026},
+  note   = {arXiv preprint, ARXIV_ID_HERE},
+  url    = {ARXIV_URL_HERE}
+}</pre>
+        </div>
       </div>
     </section>
-
-    <!-- Main result figure -->
-    <section class="section soft-section" id="results">
-      <div class="container is-max-desktop">
-        <h2 class="title is-3 has-text-centered">Overall Results</h2>
-        <p class="section-lead">The main policy comparison shows the central trade-off: CS reduced interruption and improved appropriateness, trust remained unchanged, and ET retained an overall usefulness advantage because it always provided explicit information.</p>
-        <img class="paper-figure" src="static/images/figure6_overall_results.png" alt="Overall event-level evaluations of ET and CS">
-        <p class="figure-caption has-text-centered">Overall event-level evaluations of ET and CS (N = 41), averaged across Event Priority and Passenger Activity.</p>
-      </div>
-    </section>
-
   </main>
 
-  <footer class="footer">
+  <footer>
     <div class="container">
-      <div class="columns is-centered">
-        <div class="column is-8">
-          <div class="content has-text-centered">
-            <p>
-              This page is based on the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener">Academic Project Page Template</a>, adapted from the <a href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a> project page.
-            </p>
-          </div>
-        </div>
-      </div>
+      Project page for <strong>When2Talk</strong>.
     </div>
   </footer>
+
+  <script>
+    function copyBibTeX() {
+      const text = document.getElementById('bibtex').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const button = document.querySelector('.copy-btn');
+        const old = button.textContent;
+        button.textContent = 'Copied';
+        setTimeout(() => button.textContent = old, 1400);
+      });
+    }
+  </script>
 </body>
 </html>
