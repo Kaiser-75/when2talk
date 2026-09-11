@@ -202,7 +202,7 @@
         </div>
       </div>
     </section>
-    <!-- Demo Video -->
+    
 <section id="demo-video">
   <div class="container">
     <h2>Demo Video</h2>
@@ -213,14 +213,31 @@
       context-sensitive in-car communication.
     </p>
 
-    <div class="video-wrapper">
+    <div style="
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #000;
+    ">
       <iframe
-        src="https://youtu.be/fKzLmGun8kU?si=Pp-nE0qmV16Z94rk"
+        src="https://www.youtube.com/embed/fKzLmGun8kU"
         title="When2Talk Demo Video"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        style="
+          width: 100%;
+          height: 100%;
+          border: 0;
+          display: block;
+        "
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
         allowfullscreen>
       </iframe>
     </div>
+
   </div>
 </section>
 
